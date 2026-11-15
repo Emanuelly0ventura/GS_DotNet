@@ -2,6 +2,19 @@ FIAP | Global Solution 2026/2 | CitizenTech
 Disciplina: Advanced Business Development with .NET
 Projeto: AgroConnect .NET (backend do aplicativo AgroConnect)
 
-Integrantes (preencher antes do envio):
-- Nome completo | RM
+Integrantes:
 
+Rafael Pascotte Mercadante 
+RM564928 - 2TDSPI 
+
+Rafael de Freitas Moraes 
+RM563210 - 2TDSPI 
+
+Carolina nascimento gonçalves
+RM564786 - 2TDSPI 
+
+Emanuelly ventura do nascimento
+RM562339 - 2TDSPI 
+
+Julia Sayuri Kina
+RM564555 - 2TDSPI 

@@ -2,6 +2,23 @@
 
 O AgroConnect é um projeto CitizenTech voltado ao acesso de pequenos produtores a informações sobre suas plantações. O app reúne propriedades, talhões, medições, alertas e recomendações informativas para apoiar decisões. A demonstração usa dados simulados com identificação na resposta.
 
+## Integrantes
+
+Rafael Pascotte Mercadante
+RM564928 - 2TDSPI
+
+Rafael de Freitas Moraes
+RM563210 - 2TDSPI
+
+Carolina nascimento gonçalves
+RM564786 - 2TDSPI
+
+Emanuelly ventura do nascimento
+RM562339 - 2TDSPI
+
+Julia Sayuri Kina
+RM564555 - 2TDSPI
+
 ## Rodar no Windows
 
 Pré-requisito: SDK .NET 10. Na raiz da solução, execute:
