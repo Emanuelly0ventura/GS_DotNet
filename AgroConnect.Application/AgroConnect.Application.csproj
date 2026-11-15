@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup><ProjectReference Include="..\AgroConnect.Domain\AgroConnect.Domain.csproj" /></ItemGroup>
+</Project>
+
