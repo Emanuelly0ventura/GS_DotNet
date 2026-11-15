@@ -27,6 +27,8 @@ app.MapAgroConnectHealth();
 
 var api = app.MapGroup("/api/v1").RequireRateLimiting("api");
 api.MapAuthEndpoints();
+api.MapPropertyEndpoints();
+api.MapFieldEndpoints();
 
 await app.InitializeDatabaseAsync();
 app.Run();
