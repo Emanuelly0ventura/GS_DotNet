@@ -104,4 +104,8 @@ Os seis projetos ficam ao lado de `AgroConnect.sln`, seguindo a organização do
 | `AgroConnect.Tests.Unit` | Regras de domínio |
 | `AgroConnect.Tests.Integration` | Contrato mobile, saúde, segurança e push Expo |
 
-Preencha `IDENTIFICACAO.txt` com nome e RM dos integrantes antes de entregar.
+## Link do Render
+```Link do Render
+https://gs-dotnet-8wmg.onrender.com
+```
+
