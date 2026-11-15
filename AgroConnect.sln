@@ -2,6 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgroConnect.Api", "AgroConnect.Api\AgroConnect.Api.csproj", "{E0708271-C163-4E3A-9936-A615842B71DD}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgroConnect.Application", "AgroConnect.Application\AgroConnect.Application.csproj", "{F46C4447-47A1-413C-A0F5-5D949DCA9879}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgroConnect.Domain", "AgroConnect.Domain\AgroConnect.Domain.csproj", "{573F0D86-6C19-4632-BEEF-00A20FEE6787}"
@@ -18,18 +20,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-
-
-
-
-
-
-
-
-
-
-
-
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Debug|x64.Build.0 = Debug|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Debug|x86.Build.0 = Debug|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Release|x64.Build.0 = Release|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0708271-C163-4E3A-9936-A615842B71DD}.Release|x86.Build.0 = Release|Any CPU
 		{F46C4447-47A1-413C-A0F5-5D949DCA9879}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F46C4447-47A1-413C-A0F5-5D949DCA9879}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F46C4447-47A1-413C-A0F5-5D949DCA9879}.Debug|x64.ActiveCfg = Debug|Any CPU
