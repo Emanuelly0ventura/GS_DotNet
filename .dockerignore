@@ -1,0 +1,14 @@
+**/.git
+**/.idea
+**/.vs
+**/bin
+**/obj
+**/TestResults
+**/coverage
+**/.env
+**/.env.*
+**/*.db
+**/*.db-*
+**/*.user
+**/*.suo
+**/secrets.json
