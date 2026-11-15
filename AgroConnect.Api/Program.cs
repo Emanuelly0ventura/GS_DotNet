@@ -3,6 +3,7 @@ using AgroConnect.Api.Exceptions;
 using AgroConnect.Api.Extensions;
 using AgroConnect.Api.Filters;
 using AgroConnect.Api.Serialization;
+using AgroConnect.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.AddAgroConnectSwagger();
 builder.AddAgroConnectObservability();
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new UtcDateConverter()));
 builder.Services.AddScoped<IdempotencyService>();
+builder.Services.AddHttpClient("expo-push", client => client.Timeout = TimeSpan.FromSeconds(8));
+builder.Services.AddHostedService<ExpoPushWorker>();
 
 var app = builder.Build();
 app.UseAgroConnectErrors();
@@ -29,6 +32,10 @@ var api = app.MapGroup("/api/v1").RequireRateLimiting("api");
 api.MapAuthEndpoints();
 api.MapPropertyEndpoints();
 api.MapFieldEndpoints();
+api.MapDeviceEndpoints();
+api.MapAlertEndpoints();
+api.MapPushEndpoints();
+api.MapRecommendationEndpoints();
 
 await app.InitializeDatabaseAsync();
 app.Run();
