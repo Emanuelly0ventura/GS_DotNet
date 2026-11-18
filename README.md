@@ -126,7 +126,7 @@ O mecanismo de autenticação contempla:
 
 O cadastro e a autenticação são realizados pelos endpoints da API:
 
-- `POST /api/v1/autenticacao/cadastro`
+- `POST /api/v1/auth/register`
 - `POST /api/v1/auth/login`
 
 Após a autenticação, a API retorna um `accessToken`, utilizado nas requisições protegidas por meio do cabeçalho:
@@ -421,7 +421,7 @@ O Swagger permite visualizar e testar os endpoints disponíveis.
 Para criar um usuário, utilize:
 
 ```http
-POST /api/v1/autenticacao/cadastro
+POST /api/v1/auth/register
 ```
 
 Depois, realize o login e copie o `accessToken` retornado.

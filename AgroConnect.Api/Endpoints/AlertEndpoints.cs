@@ -15,7 +15,7 @@ public static class AlertEndpoints
     public static RouteGroupBuilder MapAlertEndpoints(this RouteGroupBuilder api)
     {
         var alerts = api.MapGroup("/alertas").RequireAuthorization().WithTags("Alertas");
-        alerts.MapGet("/", async (HttpContext ctx, AgroConnectDbContext db, string? status, int page = 1, int size = 20) =>
+        api.MapGet("/alerts", async (HttpContext ctx, AgroConnectDbContext db, string? status, int page = 1, int size = 20) =>
         {
             var normalized = status?.Trim().ToUpperInvariant();
             if (normalized is not (null or "UNREAD" or "READ" or "RESOLVED"))
@@ -30,7 +30,7 @@ public static class AlertEndpoints
                 .ThenByDescending(a => a.Severity == "WARNING").ThenByDescending(a => a.CreatedAt).ThenBy(a => a.Id)
                 .Skip(PageBuilder.Offset(page, size)).Take(size).ToListAsync(ct);
             return Results.Ok(PageBuilder.ToPage(items.Select(ToResponse).ToArray(), page, size, total));
-        }).WithSummary("Lista alertas por severidade e data").Produces<PageResponse<AlertResponse>>();
+        }).RequireAuthorization().WithTags("Alertas").WithSummary("Lista alertas por severidade e data").Produces<PageResponse<AlertResponse>>();
 
 
         alerts.MapGet("/{id:guid}", async (Guid id, HttpContext ctx, AgroConnectDbContext db) =>

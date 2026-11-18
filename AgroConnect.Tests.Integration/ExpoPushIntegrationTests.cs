@@ -21,7 +21,7 @@ public sealed class ExpoPushIntegrationTests
         await using var factory = new ApiFactory(seed: true, expo: expo);
         using var client = factory.CreateClient();
         await Login(client, "demo@agroconnect.com");
-        var devices = (await client.GetFromJsonAsync<PageResponse<DeviceResponse>>(Root + "/dispositivos"))!.Items;
+        var devices = (await client.GetFromJsonAsync<PageResponse<DeviceResponse>>(Root + "/devices"))!.Items;
         var device = Assert.Single(devices, d => d.Status == "ONLINE");
         var push = new PushTokenInput("ExponentPushToken[test]", "android");
         Assert.Equal(HttpStatusCode.NoContent, (await client.PostAsJsonAsync(Root + "/me/push-tokens", push)).StatusCode);

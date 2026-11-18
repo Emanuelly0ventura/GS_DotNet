@@ -20,18 +20,18 @@ public sealed class MobileContractIntegrationTests
         await using var factory = new ApiFactory();
         using var client = factory.CreateClient();
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync(Root + "/auth/me")).StatusCode);
-        var bad = await client.PostAsJsonAsync(Root + "/autenticacao/cadastro", new { name = "A", email = "invalido" });
+        var bad = await client.PostAsJsonAsync(Root + "/auth/register", new { name = "A", email = "invalido" });
         Assert.Equal(HttpStatusCode.BadRequest, bad.StatusCode);
         Assert.True((await bad.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("details").TryGetProperty("password", out _));
 
-        var internalEmail = await client.PostAsJsonAsync(Root + "/autenticacao/cadastro",
+        var internalEmail = await client.PostAsJsonAsync(Root + "/auth/register",
             new RegisterRequest("Ana", "ana@localhost", ApiFactory.Password));
         Assert.Equal(HttpStatusCode.BadRequest, internalEmail.StatusCode);
         Assert.True((await internalEmail.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("details").TryGetProperty("email", out _));
 
         var email = "ana@example.test";
         var auth = await Register(client, email);
-        var duplicate = await client.PostAsJsonAsync(Root + "/autenticacao/cadastro", new RegisterRequest("Outra", "ANA@example.test", ApiFactory.Password));
+        var duplicate = await client.PostAsJsonAsync(Root + "/auth/register", new RegisterRequest("Outra", "ANA@example.test", ApiFactory.Password));
         Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
         var wrong = await client.PostAsJsonAsync(Root + "/auth/login", new LoginRequest(email, "invalid-password"));
         Assert.Equal(HttpStatusCode.Unauthorized, wrong.StatusCode);
@@ -47,7 +47,7 @@ public sealed class MobileContractIntegrationTests
         var db = scope.ServiceProvider.GetRequiredService<AgroConnectDbContext>();
         Assert.Equal(1, await db.PushTokens.CountAsync());
 
-        Assert.Equal(HttpStatusCode.NoContent, (await client.PostAsync(Root + "/autenticacao/sair", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, (await client.PostAsync(Root + "/auth/logout", null)).StatusCode);
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync(Root + "/auth/me")).StatusCode);
         Assert.Empty(await db.PushTokens.ToListAsync());
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
@@ -64,7 +64,7 @@ public sealed class MobileContractIntegrationTests
         await Register(other, "two@example.test");
 
         var input = new PropertyInput("Sítio", "Ibiúna", " sp ", 3.5m, "Descrição");
-        var path = Root + "/propriedades";
+        var path = Root + "/properties";
         var attempts = await Task.WhenAll(Enumerable.Range(0, 6).Select(_ => client.PostAsJsonAsync(path, input)));
         Assert.All(attempts, response => Assert.Equal(HttpStatusCode.Created, response.StatusCode));
         var first = attempts[0];
@@ -96,12 +96,13 @@ public sealed class MobileContractIntegrationTests
         await using var factory = new ApiFactory();
         using var client = factory.CreateClient();
         await Register(client, "fields@example.test");
-        var properties = Root + "/propriedades";
+        var properties = Root + "/properties";
         var input = new PropertyInput("Fazenda", "Ibiúna", "SP", 0.0001m);
         var first = await PostWithKey(client, properties, input, "property-1");
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
         Assert.Equal(HttpStatusCode.Conflict, (await PostWithKey(client, properties, input with { Name = "Outro" }, "property-1")).StatusCode);
-        var fields = first.Headers.Location + "/talhoes";
+        var property = (await first.Content.ReadFromJsonAsync<PropertyResponse>())!;
+        var fields = $"{Root}/propriedades/{property.Id}/talhoes";
         var field = await PostWithKey(client, fields, new FieldInput("Canteiro", 1), "field-1");
         Assert.Equal(HttpStatusCode.Created, field.StatusCode);
         Assert.Equal(field.Headers.Location, (await PostWithKey(client, fields, new FieldInput("Canteiro", 1), "field-1")).Headers.Location);
@@ -120,14 +121,14 @@ public sealed class MobileContractIntegrationTests
         await using var factory = new ApiFactory(seed: true);
         using var client = factory.CreateClient();
         await Login(client, "demo@agroconnect.com");
-        var devices = (await client.GetFromJsonAsync<PageResponse<DeviceResponse>>(Root + "/dispositivos"))!.Items;
+        var devices = (await client.GetFromJsonAsync<PageResponse<DeviceResponse>>(Root + "/devices"))!.Items;
         var offline = Assert.Single(devices, d => d.Status == "OFFLINE");
         var online = Assert.Single(devices, d => d.Status == "ONLINE");
-        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync(Root + "/dispositivos/" + online.Id)).StatusCode);
-        var sensors = (await client.GetFromJsonAsync<PageResponse<SensorResponse>>(Root + "/dispositivos/" + offline.Id + "/sensores"))!.Items;
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync(Root + "/devices/" + online.Id)).StatusCode);
+        var sensors = (await client.GetFromJsonAsync<PageResponse<SensorResponse>>(Root + "/devices/" + offline.Id + "/sensors"))!.Items;
         var sensor = Assert.Single(sensors);
-        var readings = Root + "/dispositivos/" + offline.Id + "/leituras";
-        var latest = await client.GetFromJsonAsync<LatestReadingsResponse>(readings + "/ultimas");
+        var readings = Root + "/devices/" + offline.Id + "/readings";
+        var latest = await client.GetFromJsonAsync<LatestReadingsResponse>(readings + "/latest");
         Assert.True(latest!.SimulatedData);
         var reading = Assert.Single(latest.Readings);
         Assert.Equal("SENSOR_ERROR", reading.Quality);
@@ -144,20 +145,20 @@ public sealed class MobileContractIntegrationTests
         Assert.Empty(empty.Items);
         Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync(readings + "?type=SOIL_MOISTURE&interval=2m")).StatusCode);
 
-        var alerts = (await client.GetFromJsonAsync<PageResponse<AlertResponse>>(Root + "/alertas?status=UNREAD"))!.Items;
+        var alerts = (await client.GetFromJsonAsync<PageResponse<AlertResponse>>(Root + "/alerts?status=UNREAD"))!.Items;
         var alert = Assert.Single(alerts);
         for (var attempt = 0; attempt < 2; attempt++)
         {
             var response = await client.PatchAsync(Root + "/alerts/" + alert.Id + "/read", null);
             Assert.Equal("READ", (await response.Content.ReadFromJsonAsync<AlertResponse>())!.Status);
         }
-        var recommended = await client.PostAsJsonAsync(Root + "/recomendacoes", new RecommendationInput(online.Id));
+        var recommended = await client.PostAsJsonAsync(Root + "/recommendations", new RecommendationInput(online.Id));
         Assert.True(Assert.Single((await recommended.Content.ReadFromJsonAsync<PageResponse<RecommendationResponse>>())!.Items).SimulatedData);
     }
 
     internal static async Task<AuthResponse> Register(HttpClient client, string email)
     {
-        var response = await client.PostAsJsonAsync(Root + "/autenticacao/cadastro", new RegisterRequest("Pessoa de Teste", email, ApiFactory.Password));
+        var response = await client.PostAsJsonAsync(Root + "/auth/register", new RegisterRequest("Pessoa de Teste", email, ApiFactory.Password));
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         return UseToken(client, (await response.Content.ReadFromJsonAsync<AuthResponse>())!);
     }

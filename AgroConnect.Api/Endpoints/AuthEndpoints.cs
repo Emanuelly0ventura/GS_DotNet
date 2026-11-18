@@ -13,8 +13,8 @@ public static class AuthEndpoints
 {
     public static RouteGroupBuilder MapAuthEndpoints(this RouteGroupBuilder api)
     {
-        var autenticacao = api.MapGroup("/autenticacao").WithTags("Autenticação");
-        autenticacao.MapPost("/cadastro", async (RegisterRequest input, AgroConnectDbContext db, JwtTokenService jwt, CancellationToken ct) =>
+        var auth = api.MapGroup("/auth").WithTags("Autenticação");
+        auth.MapPost("/register", async (RegisterRequest input, AgroConnectDbContext db, JwtTokenService jwt, CancellationToken ct) =>
         {
             var details = new Dictionary<string, string>();
             var email = input.Email?.Trim().ToLowerInvariant() ?? "";
@@ -40,7 +40,6 @@ public static class AuthEndpoints
         }).AllowAnonymous().RequireRateLimiting("auth").WithSummary("Cadastra um usuário")
           .Produces<AuthResponse>(201).Produces<ApiError>(409);
 
-        var auth = api.MapGroup("/auth").WithTags("Autenticação");
         auth.MapPost("/login", async (LoginRequest input, AgroConnectDbContext db, JwtTokenService jwt, CancellationToken ct) =>
         {
             var email = input.Email?.Trim().ToLowerInvariant() ?? "";
@@ -61,7 +60,7 @@ public static class AuthEndpoints
             return user is null ? HttpExtensions.Error(404, "NOT_FOUND", "Usuário não encontrado.") : Results.Ok(ToResponse(user));
         }).RequireAuthorization().WithSummary("Retorna o usuário autenticado").Produces<UserResponse>().Produces<ApiError>(404);
 
-        autenticacao.MapPost("/sair", async (HttpContext ctx, AgroConnectDbContext db) =>
+        auth.MapPost("/logout", async (HttpContext ctx, AgroConnectDbContext db) =>
         {
             var sessionId = ctx.User.SessionId();
             var userId = ctx.User.UserId();
