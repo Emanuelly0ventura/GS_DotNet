@@ -14,7 +14,7 @@ public static class AlertEndpoints
 
     public static RouteGroupBuilder MapAlertEndpoints(this RouteGroupBuilder api)
     {
-        var alerts = api.MapGroup("/alerts").RequireAuthorization().WithTags("Alertas");
+        var alerts = api.MapGroup("/alertas").RequireAuthorization().WithTags("Alertas");
         alerts.MapGet("/", async (HttpContext ctx, AgroConnectDbContext db, string? status, int page = 1, int size = 20) =>
         {
             var normalized = status?.Trim().ToUpperInvariant();
@@ -67,18 +67,18 @@ public static class AlertEndpoints
                 PushPending = config.GetValue("Push:Enabled", false)
             };
             db.Alerts.Add(alert);
-            return TypedResults.Created($"/api/v1/alerts/{alert.Id}", ToResponse(alert));
+            return TypedResults.Created($"/api/v1/alertas/{alert.Id}", ToResponse(alert));
         }).WithIdempotency<AlertInput, AlertResponse>().WithSummary("Registra alerta para um dispositivo do usuário")
           .Produces<AlertResponse>(201).Produces<ApiError>(404);
 
-        alerts.MapPatch("/{id:guid}/read", async (Guid id, HttpContext ctx, AgroConnectDbContext db) =>
+        api.MapPatch("/alerts/{id:guid}/read", async (Guid id, HttpContext ctx, AgroConnectDbContext db) =>
         {
             var query = OwnedAlerts(db, ctx.User.UserId()).Where(a => a.Id == id);
             var ct = ctx.RequestAborted;
             await query.Where(a => a.Status == "UNREAD").ExecuteUpdateAsync(change => change.SetProperty(a => a.Status, "READ"), ct);
             var alert = await query.AsNoTracking().SingleOrDefaultAsync(ct);
             return alert is null ? HttpExtensions.Error(404, "NOT_FOUND", "Alerta não encontrado.") : Results.Ok(ToResponse(alert));
-        }).WithSummary("Marca alerta como lido").Produces<AlertResponse>().Produces<ApiError>(404);
+        }).RequireAuthorization().WithTags("Alertas").WithSummary("Marca alerta como lido").Produces<AlertResponse>().Produces<ApiError>(404);
         return api;
     }
 

@@ -35,6 +35,17 @@ O projeto utiliza uma abordagem integrada entre desenvolvimento backend, aplicat
 
 A demonstração utiliza dados simulados, identificados explicitamente nas respostas, permitindo validar os fluxos da aplicação sem apresentar informações simuladas como medições reais de campo.
 
+### ODS 2 — Fome zero e agricultura sustentável
+
+O AgroConnect se alinha ao ODS 2 da Agenda 2030 da ONU ao dar a pequenos produtores acesso, pelo celular, a informações sobre as condições de cultivo.
+
+- **Meta 2.3 — Apoio aos pequenos produtores.** O aplicativo reúne leituras, histórico e alertas por talhão, facilitando a consulta aos dados e ajudando o produtor a decidir onde verificar as condições da plantação.
+- **Meta 2.4 — Produção sustentável e práticas agrícolas resilientes.** O histórico de umidade do solo e os alertas permitem identificar períodos de baixa umidade e priorizar a inspeção de áreas com possível necessidade de irrigação.
+
+A demonstração usa dados simulados. O projeto apresenta como esse acompanhamento pode apoiar decisões no campo. Resultados como economia de água ou aumento de produtividade ainda precisam ser avaliados com dados reais.
+
+[ODS 2 e metas na ONU Brasil](https://brasil.un.org/pt-br/sdgs/2)
+
 ### Arquitetura
 
 A solução utiliza uma arquitetura em camadas, separando as responsabilidades entre API, Application, Domain e Infrastructure.
@@ -115,7 +126,7 @@ O mecanismo de autenticação contempla:
 
 O cadastro e a autenticação são realizados pelos endpoints da API:
 
-- `POST /api/v1/auth/register`
+- `POST /api/v1/autenticacao/cadastro`
 - `POST /api/v1/auth/login`
 
 Após a autenticação, a API retorna um `accessToken`, utilizado nas requisições protegidas por meio do cabeçalho:
@@ -410,7 +421,7 @@ O Swagger permite visualizar e testar os endpoints disponíveis.
 Para criar um usuário, utilize:
 
 ```http
-POST /api/v1/auth/register
+POST /api/v1/autenticacao/cadastro
 ```
 
 Depois, realize o login e copie o `accessToken` retornado.

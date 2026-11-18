@@ -24,27 +24,27 @@ public sealed class ApiHealthAndSecurityTests
         (string Method, string Path)[] mobileRoutes =
         [
             ("post", "/auth/login"),
-            ("post", "/auth/register"),
+            ("post", "/autenticacao/cadastro"),
             ("get", "/auth/me"),
-            ("post", "/auth/logout"),
-            ("get", "/properties"),
-            ("post", "/properties"),
-            ("get", "/properties/{id}"),
-            ("patch", "/properties/{id}"),
-            ("delete", "/properties/{id}"),
-            ("get", "/devices"),
-            ("get", "/devices/{id}"),
-            ("get", "/devices/{id}/sensors"),
-            ("get", "/devices/{id}/readings/latest"),
-            ("get", "/devices/{id}/readings"),
-            ("get", "/alerts"),
+            ("post", "/autenticacao/sair"),
+            ("get", "/propriedades"),
+            ("post", "/propriedades"),
+            ("get", "/propriedades/{id}"),
+            ("patch", "/propriedades/{id}"),
+            ("delete", "/propriedades/{id}"),
+            ("get", "/dispositivos"),
+            ("get", "/dispositivos/{id}"),
+            ("get", "/dispositivos/{id}/sensores"),
+            ("get", "/dispositivos/{id}/leituras/ultimas"),
+            ("get", "/dispositivos/{id}/leituras"),
+            ("get", "/alertas"),
             ("patch", "/alerts/{id}/read"),
             ("post", "/me/push-tokens"),
-            ("post", "/recommendations")
+            ("post", "/recomendacoes")
         ];
         foreach (var (verb, path) in mobileRoutes)
             Assert.True(paths.TryGetProperty(Root + path, out var operations) && operations.TryGetProperty(verb, out _), $"{verb} {path}");
-        var create = paths.GetProperty("/api/v1/properties").GetProperty("post");
+        var create = paths.GetProperty("/api/v1/propriedades").GetProperty("post");
         Assert.Contains(create.GetProperty("parameters").EnumerateArray(), p => p.GetProperty("name").GetString() == "Idempotency-Key");
         Assert.True(create.GetProperty("responses").TryGetProperty("429", out _));
         Assert.True(create.TryGetProperty("security", out _));

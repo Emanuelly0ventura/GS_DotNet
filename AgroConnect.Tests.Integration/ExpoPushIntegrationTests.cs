@@ -21,13 +21,13 @@ public sealed class ExpoPushIntegrationTests
         await using var factory = new ApiFactory(seed: true, expo: expo);
         using var client = factory.CreateClient();
         await Login(client, "demo@agroconnect.com");
-        var devices = (await client.GetFromJsonAsync<PageResponse<DeviceResponse>>(Root + "/devices"))!.Items;
+        var devices = (await client.GetFromJsonAsync<PageResponse<DeviceResponse>>(Root + "/dispositivos"))!.Items;
         var device = Assert.Single(devices, d => d.Status == "ONLINE");
         var push = new PushTokenInput("ExponentPushToken[test]", "android");
         Assert.Equal(HttpStatusCode.NoContent, (await client.PostAsJsonAsync(Root + "/me/push-tokens", push)).StatusCode);
 
         var alert = new AlertInput(device.Id, "INFO", "Alerta de teste", "Consulte as medições", "Validação de integração");
-        var path = Root + "/alerts";
+        var path = Root + "/alertas";
         var first = await PostWithKey(client, path, alert, "alert-1");
         var repeated = await PostWithKey(client, path, alert, "alert-1");
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);

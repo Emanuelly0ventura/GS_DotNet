@@ -10,7 +10,7 @@ public static class RecommendationEndpoints
 {
     public static RouteGroupBuilder MapRecommendationEndpoints(this RouteGroupBuilder api)
     {
-        api.MapPost("/recommendations", async (RecommendationInput input, HttpContext ctx, AgroConnectDbContext db) =>
+        api.MapPost("/recomendacoes", async (RecommendationInput input, HttpContext ctx, AgroConnectDbContext db) =>
         {
             if (input.DeviceId == Guid.Empty)
                 return HttpExtensions.Error(400, "VALIDATION_ERROR", "Informe o dispositivo.");

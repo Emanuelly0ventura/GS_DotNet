@@ -8,7 +8,7 @@ public static class PropertyEndpoints
 {
     public static RouteGroupBuilder MapPropertyEndpoints(this RouteGroupBuilder api)
     {
-        var group = api.MapGroup("/properties").RequireAuthorization().WithTags("Propriedades");
+        var group = api.MapGroup("/propriedades").RequireAuthorization().WithTags("Propriedades");
         group.MapGet("/", async (HttpContext ctx, IPropertyService properties, int page = 1, int size = 20) =>
             Results.Ok(await properties.ListAsync(ctx.User.UserId(), page, size, ctx.RequestAborted)))
             .WithSummary("Lista propriedades do usuário").Produces<PageResponse<PropertyResponse>>();
@@ -17,7 +17,7 @@ public static class PropertyEndpoints
         {
             var result = properties.PrepareCreation(ctx.User.UserId(), input);
             return result.Property is { } property
-                ? (IResult)TypedResults.Created($"/api/v1/properties/{property.Id}", property)
+                ? (IResult)TypedResults.Created($"/api/v1/propriedades/{property.Id}", property)
                 : Invalid(result.Errors);
         }).WithIdempotency<PropertyInput, PropertyResponse>().WithSummary("Cria propriedade").Produces<PropertyResponse>(201);
 

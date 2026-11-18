@@ -12,7 +12,7 @@ public static class DeviceEndpoints
 {
     public static RouteGroupBuilder MapDeviceEndpoints(this RouteGroupBuilder api)
     {
-        var devices = api.MapGroup("/devices").RequireAuthorization().WithTags("Dispositivos e leituras");
+        var devices = api.MapGroup("/dispositivos").RequireAuthorization().WithTags("Dispositivos e leituras");
         devices.MapGet("/", async (HttpContext ctx, AgroConnectDbContext db, Guid? fieldId = null, int page = 1, int size = 20) =>
         {
             page = Math.Max(1, page);
@@ -32,7 +32,7 @@ public static class DeviceEndpoints
             return device is null ? MissingDevice() : Results.Ok(ToResponse(device, DateTimeOffset.UtcNow));
         }).WithSummary("Obtém dispositivo").Produces<DeviceResponse>().Produces<ApiError>(404);
 
-        devices.MapGet("/{id:guid}/sensors", async (Guid id, HttpContext ctx, AgroConnectDbContext db, int page = 1, int size = 20) =>
+        devices.MapGet("/{id:guid}/sensores", async (Guid id, HttpContext ctx, AgroConnectDbContext db, int page = 1, int size = 20) =>
         {
             var ct = ctx.RequestAborted;
             if (!await OwnedDevices(db, ctx.User.UserId()).AnyAsync(d => d.Id == id, ct)) return MissingDevice();
@@ -45,7 +45,7 @@ public static class DeviceEndpoints
             return Results.Ok(PageBuilder.ToPage(items, page, size, total));
         }).WithSummary("Lista sensores").Produces<PageResponse<SensorResponse>>().Produces<ApiError>(404);
 
-        devices.MapGet("/{id:guid}/readings/latest", async (Guid id, HttpContext ctx, AgroConnectDbContext db) =>
+        devices.MapGet("/{id:guid}/leituras/ultimas", async (Guid id, HttpContext ctx, AgroConnectDbContext db) =>
         {
             var ct = ctx.RequestAborted;
             if (!await OwnedDevices(db, ctx.User.UserId()).AnyAsync(d => d.Id == id, ct)) return MissingDevice();
@@ -57,7 +57,7 @@ public static class DeviceEndpoints
             return Results.Ok(new LatestReadingsResponse(id, readings.Select(r => (DateTimeOffset?)r.RecordedAt).Max(), readings, true));
         }).WithSummary("Retorna a última leitura de cada sensor com dados").Produces<LatestReadingsResponse>().Produces<ApiError>(404);
 
-        devices.MapGet("/{id:guid}/readings", async (Guid id, string? type, Guid? sensorId,
+        devices.MapGet("/{id:guid}/leituras", async (Guid id, string? type, Guid? sensorId,
             DateTimeOffset? from, DateTimeOffset? to, string? interval, HttpContext ctx, AgroConnectDbContext db) =>
         {
             var ct = ctx.RequestAborted;
